@@ -4,3 +4,6 @@ node_modules
 .git
 .gitignore
 README.md
+.env
+README.md
+docker-compose.yml

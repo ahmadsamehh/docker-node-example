@@ -1,7 +1,8 @@
-FROM node:25-alpine
+FROM node:alpine
 WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY index.js package-lock.json ./
-EXPOSE 3003
+ENV PORT=5003
+EXPOSE 5003
 CMD ["npm", "run", "dev"]
