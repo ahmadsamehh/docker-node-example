@@ -6,4 +6,4 @@ node_modules
 README.md
 .env
 README.md
-docker-compose.yml
+docker-compose*.yml

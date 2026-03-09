@@ -1,14 +1,13 @@
-version: "5.1.0"
 services:
   node-app:
-    build: .
-    image: node-docker-image
-    container_name: node-docker-container
-    ports:
-      - "5000:5000"
-    env_file:
-      - ./.env
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run dev
+    build:
+      context: .
+      args:
+        - NODE_ENV
+  
+  mondodb:
+    image: mongo:latest
+    container_name: mongodb-container
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=ahmadsamehh
+      - MONGO_INITDB_ROOT_PASSWORD=66788

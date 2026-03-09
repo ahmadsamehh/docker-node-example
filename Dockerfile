@@ -1,8 +1,7 @@
 FROM node:alpine
 WORKDIR /app
 COPY package.json .
-RUN npm install
+ARG NODE_ENV
+RUN if [ "$NODE_ENV" = "production" ]; then npm install --omit=dev; else npm install; fi
 COPY index.js package-lock.json ./
-ENV PORT=5003
-EXPOSE 5003
-CMD ["npm", "run", "dev"]
+EXPOSE ${PORT}
