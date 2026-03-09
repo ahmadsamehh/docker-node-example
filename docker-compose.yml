@@ -11,3 +11,8 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=ahmadsamehh
       - MONGO_INITDB_ROOT_PASSWORD=66788
+    volumes:
+      - mongodb-volume:/data/db
+
+volumes:
+  mongodb-volume:
