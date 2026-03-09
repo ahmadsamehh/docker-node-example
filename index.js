@@ -3,6 +3,12 @@ const app = express();
 
 const PORT = process.env.PORT || 3003;
 const text = process.env.NODE_ENV === "production" ? "Hello from PRODUCTION!" : "Hello from DEVELOPMENT!";
+const mongoose = require('mongoose');
+
+// Connect to MongoDB
+mongoose.connect('mongodb://ahmadsamehh:66788@mongodb-container:27017/?authSource=admin')
+.then(() => console.log('Connected to MongoDB Successfully'))
+.catch(err => console.error('MongoDB connection error:', err));
 
 // Root route
 app.get("/", (req, res) => {
