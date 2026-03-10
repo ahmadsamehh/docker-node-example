@@ -4,11 +4,23 @@ const app = express();
 const PORT = process.env.PORT || 3003;
 const text = process.env.NODE_ENV === "production" ? "Hello from PRODUCTION!" : "Hello from DEVELOPMENT!";
 const mongoose = require('mongoose');
+const { MONGO_IP, MONGO_PORT, MONGO_USERNAME, MONGO_PASSWORD } = require('./config/config');
+const mongourl = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://ahmadsamehh:66788@mongodb-container:27017/?authSource=admin')
-.then(() => console.log('Connected to MongoDB Successfully'))
-.catch(err => console.error('MongoDB connection error:', err));
+const connectWithRetry = () => {
+  mongoose
+    .connect(mongourl)
+    .then(() => console.log('Connected to MongoDB successfully'))
+    .catch((error) => {
+      console.error('Failed to connect to MongoDB, retrying in 5 seconds...');
+      console.error(error.message);
+      setTimeout(connectWithRetry, 5000);
+    });
+};
+
+connectWithRetry();
+
 
 // Root route
 app.get("/", (req, res) => {

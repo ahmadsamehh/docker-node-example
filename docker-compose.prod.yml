@@ -3,8 +3,8 @@ services:
     container_name: node-docker-production-container
     image: node-docker-production-image
     ports:
-      - "5050:5050"
+      - ${PORT}:${PORT}
     environment:
-      - PORT=5050
+      - PORT=${PORT}
       - NODE_ENV=production
     command: npm start

@@ -4,8 +4,10 @@ services:
       context: .
       args:
         - NODE_ENV
+    depends_on:
+      - mongodb
   
-  mondodb:
+  mongodb:
     image: mongo:latest
     container_name: mongodb-container
     environment:

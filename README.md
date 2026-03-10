@@ -1,105 +1,139 @@
-# Node Docker App
+# Node Docker Example
 
-A simple Node.js + Express app designed for local development and Docker practice.
+Small Express app prepared for Docker Compose development and production-style runs.
 
-## Features
+## What Changed
 
-- Express server with a configurable port (`PORT`, default: `3003`)
-- Basic routes for home, health check, and a custom endpoint
-- Dockerized setup for container-based development
-- `nodemon` support for rapid development
+This project now uses a layered Docker Compose setup:
 
-## Tech Stack
+- `docker-compose.yml` defines the shared app build plus a MongoDB service
+- `docker-compose.dev.yml` adds the development container settings
+- `docker-compose.prod.yml` adds the production container settings
+- `development.env` and `production.env` provide environment-specific values
+
+## Stack
 
 - Node.js
 - Express
-- Docker
+- Mongoose
+- Docker Compose
+- MongoDB
 
 ## Project Structure
 
 ```text
 .
-|-- index.js
+|-- config/
+|   `-- config.js
+|-- development.env
+|-- docker-compose.dev.yml
+|-- docker-compose.prod.yml
+|-- docker-compose.yml
 |-- Dockerfile
-|-- package.json
+|-- index.js
 |-- package-lock.json
+|-- package.json
+|-- production.env
 `-- README.md
 ```
 
-## API Routes
+## Application Behavior
 
-- `GET /`  
-  Returns a basic HTML page with links to available routes.
+The server reads:
 
-- `GET /health`  
-  Returns JSON health information:
-  - `status`
-  - `message`
-  - `uptime`
+- `PORT` to decide which port to listen on
+- `NODE_ENV` to switch the root page message between development and production text
+- MongoDB connection settings from environment variables through [`config/config.js`](/Users/ahmadsameh/Desktop/Work/Portofolio/docker-node-example/config/config.js)
 
-- `GET /ahmad`  
-  Returns a simple HTML response.
+Available routes:
 
-## Getting Started (Local)
+- `GET /` returns a small HTML page with the current environment message
+- `GET /health` returns JSON with `status`, `message`, and `uptime`
+- `GET /ahmad` returns a simple HTML response
+
+## Local Run
 
 ### Prerequisites
 
-- Node.js 18+ (or compatible current version)
+- Node.js
 - npm
 
-### Install dependencies
+### Install
 
 ```bash
 npm install
 ```
 
-### Run in development
+### Start in development
 
 ```bash
 npm run dev
 ```
 
-### Run normally
+### Start normally
 
 ```bash
 npm start
 ```
 
-The app will run at:
+Default local port:
 
 ```text
 http://localhost:3003
 ```
 
-## Running with Docker
+## Docker Compose
 
-### Build image
+### Development
 
-```bash
-docker build -t node-docker-app .
-```
-
-### Run container
+Runs the app with bind mounts and `nodemon`, using values from [`development.env`](/Users/ahmadsameh/Desktop/Work/Portofolio/docker-node-example/development.env).
 
 ```bash
-docker run -p 3003:3003 --name node-docker-app node-docker-app
+docker compose -f docker-compose.yml -f docker-compose.dev.yml --env-file development.env up --build
 ```
 
-Then open:
+Expected app URL:
 
 ```text
-http://localhost:3003
+http://localhost:5055
 ```
 
-## Environment Variables
+### Production-style run
 
-- `PORT`: server port (default is `3003`)
+Runs the production container settings from [`docker-compose.prod.yml`](/Users/ahmadsameh/Desktop/Work/Portofolio/docker-node-example/docker-compose.prod.yml) with values from [`production.env`](/Users/ahmadsameh/Desktop/Work/Portofolio/docker-node-example/production.env).
 
-## Available Scripts
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file production.env up --build
+```
 
-- `npm start` -> runs `node index.js`
-- `npm run dev` -> runs `nodemon -L index.js`
+Expected app URL:
+
+```text
+http://localhost:5050
+```
+
+## Environment Files
+
+[`development.env`](/Users/ahmadsameh/Desktop/Work/Portofolio/docker-node-example/development.env):
+
+- `PORT=5055`
+- `NODE_ENV=development`
+- `MONGO_IP=mongodb-container`
+- `MONGO_PORT=27017`
+- `MONGO_USERNAME=ahmadsamehh`
+- `MONGO_PASSWORD=66788`
+
+[`production.env`](/Users/ahmadsameh/Desktop/Work/Portofolio/docker-node-example/production.env):
+
+- `PORT=5050`
+- `NODE_ENV=production`
+
+## Scripts
+
+- `npm start` runs `node index.js`
+- `npm run dev` runs `nodemon -L index.js`
 
 ## Notes
 
-This project is intended as a lightweight example for learning Docker with Node.js/Express and testing simple endpoint behavior.
+- The base Compose file creates a named volume, `mongodb-volume`, for MongoDB data.
+- MongoDB is configured in Compose and through environment variables, but the current app routes do not perform any database operations.
